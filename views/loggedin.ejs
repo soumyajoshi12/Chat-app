@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.4.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div id="main">
+      <input
+        style="display: none"
+        id="user"
+        type="text"
+        value="<%= user.username %>"
+      />
+      <!-- <%= user.username %> -->
+      <div id="left">
+        <div id="top">
+          <div id="online">ONLINE:</div>
+          <div id="onlineno"></div>
+        </div>
+        <div id="search"><i class="ri-search-line"></i>Search</div>
+      </div>
+      <div id="right">
+        <div id="upper">
+          <div id="img">
+            <img src="../images/uploads/<%=user.pic%>" alt="" />
+          </div>
+          <h1><%=user.username%></h1>
+        </div>
+        <div id="msg"></div>
+        <form id="btmform" action="" style="height: 7%">
+          <input type="text" id="input" placeholder="type your message" />
+          <input type="submit" value="send" id="submit" />
+        </form>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js"
+    integrity="sha512-Z6C1p1NIexPj5MsVUunW4pg7uMX6/TT3CUVldmjXx2kpip1eZcrAnxIusDxyFIikyM9A61zOVNgvLr/TGudOQg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    var socket = io();
+    const user = document.querySelector("#user");
+    const mes = document.querySelector("#msg");
+
+    function append(name, message, position) {
+      mes.innerHTML += `<div class="${position}" id="text">
+                <h4>${name} :<span>${message}</span> </h4>
+            </div> <br>`;
+      mes.scrollTo(0, mes.scrollHeight);
+    }
+
+    var username = document.querySelector("#user").value;
+
+    socket.emit("newUser", username);
+    console.log("user", username);
+    socket.on("user-joined", function (username) {
+      console.log(username);
+      append(`${username}`, "join the chat", "center");
+    });
+    socket.on("allusers", (user) => {
+      // e.preventDefault();
+      document.querySelector("#onlineno").textContent = user.length;
+    });
+  </script>
+</html>
